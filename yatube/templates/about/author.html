@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Об авторе проекта{% endblock %}
+{% block content %}
+{% load static %}
+<img src="{% static 'img/IMG_9659.png' %}" width="450" height="338">
+<body>
+  <h1>{{ name }}</h1>
+  <p>{{ job }}</p>
+  <p>{{ future }}</p>
+  <p>{{ inspiration }}</p>
+  <p><a href="https://github.com/mnkcmrd">Мой GITHUB</a></p>>
+</body>>
+{% endblock %}
