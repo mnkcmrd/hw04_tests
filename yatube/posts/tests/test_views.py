@@ -63,23 +63,46 @@ class PostModelTest(TestCase):
         self.assertEqual(post, self.post.text)
 
     def test_group_list_page_show_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:group_list', kwargs={'slug': self.post.group.slug}))
+        response = self.authorized_client.get(
+            reverse(
+                'posts:group_list',
+                kwargs={'slug': self.post.group.slug}
+            )
+        )
         page_object = response.context['page_obj'][0]
         post = page_object.text
         self.assertEqual(post, self.post.text)
 
     def test_profile_page_show_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:profile', kwargs={'username': self.post.author}))
+        response = self.authorized_client.get(
+            reverse(
+                'posts:profile',
+                kwargs={'username': self.post.author}
+            )
+        )
         page_object = response.context['page_obj'][0]
         post = page_object.text
         self.assertEqual(post, self.post.text)
 
     def test_post_detail_page_show_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:post_detail', kwargs={'post_id': self.post.id}))
-        self.assertEqual(response.context.get('post').text, self.post.text)
+        response = self.authorized_client.get(
+            reverse(
+                'posts:post_detail',
+                kwargs={'post_id': self.post.id}
+            )
+        )
+        self.assertEqual(
+            response.context.get('post').text,
+            self.post.text
+        )
 
     def test_post_edit_page_filter_id(self):
-        response = self.authorized_client.get(reverse('posts:post_edit', kwargs={'post_id': self.post.id}))
+        response = self.authorized_client.get(
+            reverse(
+                'posts:post_edit',
+                kwargs={'post_id': self.post.id}
+            )
+        )
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField
@@ -90,7 +113,9 @@ class PostModelTest(TestCase):
                 self.assertIsInstance(form_field, expected)
 
     def test_post_create_page_filter_id(self):
-        response = self.authorized_client.get(reverse('posts:post_create'))
+        response = self.authorized_client.get(
+            reverse('posts:post_create')
+        )
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField
