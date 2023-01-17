@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase, override_settings
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from ..models import Post, Group
@@ -39,7 +39,10 @@ class PostCreateFormTests(TestCase):
             data=form_data,
             follow=True
         )
-        self.assertRedirects(response, reverse('posts:profile', kwargs={'username': self.user}))
+        self.assertRedirects(
+            response,
+            reverse('posts:profile', kwargs={'username': self.user})
+        )
         self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertEqual(response.status_code, 200)
 
@@ -53,6 +56,9 @@ class PostCreateFormTests(TestCase):
             data=form_data,
             follow=True
         )
-        self.assertRedirects(response, reverse('posts:post_detail', kwargs={'post_id': self.post.id}))
+        self.assertRedirects(
+            response,
+            reverse('posts:post_detail', kwargs={'post_id': self.post.id})
+        )
         self.assertEqual(Post.objects.count(), post_count)
         self.assertEqual(response.status_code, 200)

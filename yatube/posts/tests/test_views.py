@@ -211,4 +211,3 @@ class PaginatorViewsTest(TestCase):
         ]
         for response in responses:
             self.assertEqual(len(response.context['page_obj']), 3)
-

@@ -38,5 +38,4 @@ class PostModelTest(TestCase):
 
     def test_object_name_is_text_fild(self):
         post = PostModelTest.post
-        post_text = post.text
         self.assertEqual(post.text, str(post))
