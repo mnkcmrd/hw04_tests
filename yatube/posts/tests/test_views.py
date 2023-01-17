@@ -128,14 +128,32 @@ class PostModelTest(TestCase):
     def test_post_create_in_index_group_profile_page(self):
         responses = [
             self.authorized_client.get(reverse('posts:index')),
-            self.authorized_client.get(reverse('posts:group_list', kwargs={'slug': self.post.group.slug})),
-            self.authorized_client.get(reverse('posts:profile', kwargs={'username': self.post.author}))
+            self.authorized_client.get(reverse(
+                'posts:group_list',
+                kwargs={'slug': self.post.group.slug})
+            ),
+            self.authorized_client.get(reverse(
+                'posts:profile',
+                kwargs={'username': self.post.author})
+            )
         ]
         for response in responses:
-            self.assertEqual(response.context.get('page_obj')[0].text, self.post.text)
-            self.assertEqual(response.context.get('page_obj')[0].group, self.post.group)
-            self.assertEqual(response.context.get('page_obj')[0].id, self.post.id)
-            self.assertNotEqual(response.context.get('page_obj')[0].group, self.group)
+            self.assertEqual(
+                response.context.get('page_obj')[0].text,
+                self.post.text
+            )
+            self.assertEqual(
+                response.context.get('page_obj')[0].group,
+                self.post.group
+            )
+            self.assertEqual(
+                response.context.get('page_obj')[0].id,
+                self.post.id
+            )
+            self.assertNotEqual(
+                response.context.get('page_obj')[0].group,
+                self.group
+            )
 
 
 class PaginatorViewsTest(TestCase):
@@ -165,8 +183,12 @@ class PaginatorViewsTest(TestCase):
     def test_first_page_contains_ten_records(self):
         responses = [
             self.client.get(reverse('posts:index')),
-            self.client.get(reverse('posts:group_list', kwargs={'slug': self.group.slug})),
-            self.client.get(reverse('posts:profile', kwargs={'username': 'auth'}))
+            self.client.get(
+                reverse('posts:group_list', kwargs={'slug': self.group.slug})
+            ),
+            self.client.get(
+                reverse('posts:profile', kwargs={'username': 'auth'})
+            )
         ]
         for response in responses:
             self.assertEqual(len(response.context['page_obj']), 10)
@@ -174,8 +196,18 @@ class PaginatorViewsTest(TestCase):
     def test_second_page_contains_three_records(self):
         responses = [
             self.client.get(reverse('posts:index') + '?page=2'),
-            self.client.get(reverse('posts:group_list', kwargs={'slug': self.group.slug}) + '?page=2'),
-            self.client.get(reverse('posts:profile', kwargs={'username': 'auth'}) + '?page=2')
+            self.client.get(
+                reverse(
+                    'posts:group_list',
+                    kwargs={'slug': self.group.slug}
+                ) + '?page=2'
+            ),
+            self.client.get(
+                reverse(
+                    'posts:profile',
+                    kwargs={'username': 'auth'}
+                ) + '?page=2'
+            )
         ]
         for response in responses:
             self.assertEqual(len(response.context['page_obj']), 3)
