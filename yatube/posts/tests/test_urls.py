@@ -47,9 +47,8 @@ class PostModelTest(TestCase):
                 self.assertEqual(response.status_code, STATUS_CODE)
 
     def test_inaccessible_pages(self):
-        status_code = http.HTTPStatus.BAD_REQUEST
         response = self.guest_client.get('/unexisting_page/')
-        self.assertEqual(response.status_code, status_code)
+        self.assertEqual(response.status_code, http.HTTPStatus.NOT_FOUND)
 
     def test_unauthorized_page_create(self):
         response = self.guest_client.get('/create/', follow=True)
