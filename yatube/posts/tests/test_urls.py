@@ -1,3 +1,5 @@
+import http
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 
@@ -7,7 +9,7 @@ from ..models import Post, Group
 User = get_user_model()
 
 
-STATUS_CODE = 200
+STATUS_CODE = http.HTTPStatus.OK
 
 
 class PostModelTest(TestCase):
