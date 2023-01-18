@@ -48,7 +48,7 @@ class PostModelTest(TestCase):
 
     def test_inaccessible_pages(self):
         response = self.guest_client.get('/unexisting_page/')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, http.HTTPStatus.BAD_REQUEST)
 
     def test_unauthorized_page_create(self):
         response = self.guest_client.get('/create/', follow=True)
@@ -56,7 +56,7 @@ class PostModelTest(TestCase):
 
     def test_authorized_pages(self):
         response = self.authorized_client.get('/create/')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, STATUS_CODE)
 
     def test_unauthorized_page_edit(self):
         response = self.guest_client.get('/posts/1/edit/', follow=True)
@@ -64,7 +64,7 @@ class PostModelTest(TestCase):
 
     def test_only_author_pages(self):
         response = self.client.get('/posts/1/edit/', follow=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, STATUS_CODE)
 
     def test_urls_uses_correct_template(self):
         templates_url_names = {
