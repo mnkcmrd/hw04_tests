@@ -33,5 +33,11 @@ class Post(models.Model):
         related_name='posts'
     )
 
+    image = models.ImageField(
+        'Image',
+        upload_to='posts/',
+        blank=True
+    )
+
     def __str__(self):
         return self.text

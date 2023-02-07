@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
-  Новая запись {{ author.get_full_name }}
+  Новая запись {{ author }}
 {% endblock %}
 {% block content %}
     <main>
@@ -19,9 +19,9 @@
                 <!--{% if user.is_authenticated %}-->
                   <!--<form method="post" action="{% url 'posts:post_create' %}" class="form-control">-->
                   {% if is_edit %}
-                    <form method="post" action="{% url 'posts:post_edit' post.id %}" class="form-control">
+                    <form method="post" enctype="multipart/form-data" action="{% url 'posts:post_edit' post.id %}" class="form-control">
                   {% else %}
-                    <form method="post" action="{% url 'posts:post_create' %}" class="form-control">
+                    <form method="post" enctype="multipart/form-data" action="{% url 'posts:post_create' %}" class="form-control">
                   {% endif %}
                 <!--{% endif %}-->
                   {% csrf_token %}
@@ -43,6 +43,12 @@
                     <small id="id_group-help" class="form-text text-muted">
                       Группа, к которой будет относиться пост
                     </small>
+                  </div>
+                  <div class="form-group row my-3 p-3">
+                    <label for="id_image">
+                      Картинка
+                    </label>
+                    <input type="file" name="image" accept="image/*" class="form-control" id="id_image">
                   </div>
                   <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">

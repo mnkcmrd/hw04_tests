@@ -1,11 +1,11 @@
-from django import forms
+from django.forms import ModelForm, forms
 from .models import Post
 
 
-class PostForm(forms.ModelForm):
+class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ('text', 'group')
+        fields = ('text', 'group', 'image')
 
         def clean_subject(self):
             data = self.cleaned_data['text']
