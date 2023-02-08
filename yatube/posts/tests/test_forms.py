@@ -22,27 +22,15 @@ class PostCreateFormTests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create_user(username='auth')
-        cls.picture = (
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
-        )
-        cls.uploaded = SimpleUploadedFile(
-            name='picture.gif',
-            content=cls.picture,
-            content_type='image/gif'
-        )
         cls.group = Group.objects.create(
-            title='test_group_title',
-            slug='test_group_slug'
+            title='test_title',
+            slug='test_slug'
         )
         cls.post = Post.objects.create(
             author=cls.user,
             text='test_post',
             id=1,
+
             )
         cls.form = PostForm()
 
@@ -92,10 +80,23 @@ class PostCreateFormTests(TestCase):
 
     def test_create_post_with_picture(self):
         post_count = Post.objects.count()
+        picture = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
+        )
+        uploaded = SimpleUploadedFile(
+            name='picture.gif',
+            content=picture,
+            content_type='image/gif'
+        )
         form_data = {
-            'group': self.group.slug,
             'text': 'test_post',
-            'image': self.uploaded
+            'group': self.group.id,
+            'image': uploaded
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'),
@@ -109,8 +110,8 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertTrue(
             Post.objects.filter(
-                group='test_group_slug',
                 text='test_post',
+                group=self.group.id,
                 image='posts/picture.gif'
-            ).exist()
+            ).exists()
         )
