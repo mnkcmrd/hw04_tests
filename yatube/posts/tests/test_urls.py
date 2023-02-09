@@ -2,6 +2,7 @@ import http
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
+from django.core.cache import cache
 
 from ..models import Post, Group
 
@@ -29,6 +30,7 @@ class PostModelTest(TestCase):
         )
 
     def setUp(self):
+        cache.clear()
         self.guest_client = Client()
         self.user = User.objects.create_user(username='IgorKorovin')
         self.authorized_client = Client()

@@ -8,7 +8,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from ..forms import PostForm
-from ..models import Post, Group
+from ..models import Post, Group, Comment
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -33,6 +33,9 @@ class PostCreateFormTests(TestCase):
 
             )
         cls.form = PostForm()
+        cls.comment = Comment.objects.create(
+            text='test_comment'
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -40,7 +43,7 @@ class PostCreateFormTests(TestCase):
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
-        #self.user = User.objects.create_user(username='IgorKorovin')
+        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 

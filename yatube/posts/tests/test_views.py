@@ -2,9 +2,9 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
+from django.core.cache import cache
 
-
-from ..models import Group, Post
+from ..models import Group, Post, Comment
 
 User = get_user_model()
 
@@ -28,9 +28,13 @@ class PostModelTest(TestCase):
                 slug='test_group_slug'
             )
         )
+        cls.comment = Comment.objects.create(
+            text='test_comment'
+        )
 
     def setUp(self):
-        self.user = User.objects.create_user(username='IgorKorovin')
+        cache.clear()
+        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -155,6 +159,41 @@ class PostModelTest(TestCase):
                 self.group
             )
 
+    def test_add_comment(self):
+        comment_count = Comment.objects.count()
+        form_data = {'text': self.comment.text}
+        response = self.authorized_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id}),
+            data=form_data,
+            follow=True
+        )
+        self.assertContains(response, self.comment.text)
+        self.assertEqual(Comment.objects.count(), comment_count + 1)
+
+    def test_add_comment_not_authorised(self):
+        comment_count = Comment.objects.count()
+        form_data = {'text': self.comment.text}
+        response = self.guest_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id}),
+            data=form_data,
+            follow=True
+        )
+        self.assertTrue(Comment.objects.filter(
+            text='test_comment'
+        ).exists())
+        self.assertEqual(Comment.objects.count(), comment_count)
+
+    def test_cache(self):
+        one = self.authorized_client.get(reverse('posts:index'))
+        post_1 = Post.objects.get(id=1)
+        post_1.text = 'new_text'
+        post_1.save()
+        two = self.authorized_client.get(reverse('posts:index'))
+        self.assertEqual(one.content, two.content)
+        cache.clear()
+        three = self.authorized_client.get(reverse('posts:index'))
+        self.assertNotEqual(one.content, three.content)
+
 
 class PaginatorViewsTest(TestCase):
 
@@ -176,6 +215,7 @@ class PaginatorViewsTest(TestCase):
         )
 
     def setUp(self):
+        cache.clear()
         self.user = User.objects.create_user(username='IgorKorovin')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
